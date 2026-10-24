@@ -1,0 +1,66 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@100..900&display=swap"
+        rel="stylesheet">
+    <title>FastQuest | Create Account</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Outfit", Arial, Helvetica, sans-serif;
+    }
+
+    main {
+        margin: 20vh auto;
+        border: 1px solid;
+        width: 400px;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    main input {
+        width: 200px;
+        height: 30px;
+        margin-bottom: 10px;
+        border: 1px solid;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    main button {
+        width: 100px;
+        height: 30px;
+        border: 1px solid;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+<body data-csrf="{{csrf_token}}">
+    <main>
+        <h1>Fast Quest</h1>
+        <h2>Create an Account</h2>
+        <label for="username">username</label> <br>
+        <input type="text" id="username" placeholder="example123"> <br>
+        <label for="first_name">first name</label> <br>
+        <input type="text" id="first_name" placeholder="example name"> <br>
+        <label for="gmail">Email</label> <br>
+        <input type="text" id="gmail" placeholder="example@email.com"> <br>
+        <label for="password">password</label> <br> 
+        <input type="password" id="password" placeholder="********"> <br>
+        <a href="/userlogin/">Log In</a> <br>
+        <button id="create">Create</button> <br>
+        <p id="message"></p>
+    </main>
+    <script src="{% static "js/createUser.js" %}"></script>
+</body>
+</html>

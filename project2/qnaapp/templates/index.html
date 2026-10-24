@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <title>FastQuest</title>
+</head>
+
+<body data-csrf="{{csrf_token}}">
+    {% if user_id is not None %}
+    <header>
+        <h1>Fast Quest</h1>
+        <div id="headerbutton">
+            <button onclick="window.location.href='/questions/'">View All Questions</button>
+            <button id="logout">Log Out</button>
+        </div>
+    </header>
+    <section id="hero">
+        <h1>Good Day, {{username}}!</h1>
+        <p>Generate Questions on Topics that come to mind!</p>
+        <div id="main">
+            <input type="text" id="topic" placeholder="Do you have a Topic in mind?">
+            <button id="createBtn">Create</button>
+        </div>
+    </section>
+    <div id="container">
+    </div>
+    <section id="recents">
+        <h3>Recent Questions Generated</h3>
+        <div id="question-container">
+            <div id="emptycard">
+                <h5>Loading Question...</h5>
+            </div>
+        </div>
+    </section>
+    <script src="{% static "js/index.js" %}"></script>
+    {% else %}
+    <header>
+        <h1>Fast Quest</h1>
+        <div id="headerbutton">
+            <button onclick="window.location.href='/userlogin/'">Log In</button>
+        </div>
+    </header>
+    <section id="hero">
+        <h1>Good Day, Visitor!</h1>
+        <p>Generate Questions on Topics that come to mind!</p>
+        <div id="main">
+            <input type="text" id="topic" placeholder="Please Login an Account Before Using FastQuest" readonly>
+            <button id="createBtn" disabled>Create</button>
+        </div>
+    </section>
+    {% endif %}
+</body>
+
+</html>

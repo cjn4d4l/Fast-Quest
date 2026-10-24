@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Outfit", Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: block;
+}
+
+#hero {
+    width: 600px;
+    margin: 20vh auto;
+    margin-bottom: 0px;
+    text-align: center;
+}
+
+#hero input {
+    margin: 20px 0px;
+    width: 80%;
+    height: 50px;
+    border-radius: 30px 0px 0px 30px;
+    border: 1px solid;
+    padding: 10px;
+}
+
+#hero button {
+    background-color: white;
+    width: 20%;
+    height: 50px;
+    border-radius: 0px 30px 30px 0px;
+    border: 1px solid;
+    cursor: pointer;
+}
+
+#hero #main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#recents {
+    margin: auto;
+    margin-bottom: 10vh;
+    width: 600px;
+    border: 1px solid;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+#question-container .qcard {
+    width: 100%;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px auto;
+}
+
+#emptycard {
+    text-align: center;
+    width: 100%;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px auto;
+}
+
+#headerbutton {
+    display: flex;
+}
+
+#headerbutton button {
+    width: 100px;
+    height: 40px;
+    margin: 10px;
+    justify-self: right;
+    border: 1px solid;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#headerbutton #logout {
+    background-color: red;
+    color: white;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.delete_question {
+    background-color: red;
+    color: white;
+    width: 100px;
+    height: 30px;
+    border: 1px solid;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#container {
+    width: 600px;
+    margin: 10px auto;
+    text-align: center;
+}
+
+#sign {
+    padding: 10px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    color: grey;
+}
+
+#warning {
+    background-color: rgb(255, 233, 233);
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 10px;
+    color: red;
+}
