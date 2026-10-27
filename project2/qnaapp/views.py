@@ -1,6 +1,6 @@
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from .models import Question
+from .models import Question, Topic
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -24,12 +24,26 @@ def user_login (request):
     return render(request, "login.html", {})
 
 @ensure_csrf_cookie
-def view_all_questions (request):
+def view_topics (request):
     context = {
         "user_id": request.session.get("user_id"),
         "username": request.session.get("username")
     }
-    return render(request, "questions.html", context)
+    return render(request, "topics.html", context)
+
+def view_questions (request, topic_id: int):
+    user_id = request.session.get('user_id')
+    data = Question.objects.filter(topic_id=topic_id, user_id=user_id).values()
+    topic = Topic.objects.filter(pk=topic_id, user_id=user_id).first()
+
+    if data is None or topic is None:
+        return HttpResponse("There Are No Questions Available", status=404)
+    questions = {
+        "user_id": request.session.get("user_id"),
+        "topic": topic.topic,
+        "questions": data
+    }
+    return render(request, 'questions.html', questions)
 
 def user_logout (request):
     request.session.flush()
@@ -89,10 +103,12 @@ def login_user (request):
 def create_question (request):
     if request.method == "POST":
         try:
+            user_id = request.session.get("user_id")
             data = json.loads(request.body)
             topic = data.get("topic")
+            count = data.get("count")
 
-            generated_question = gemini.generate_question(topic)
+            generated_question = gemini.generate_question(topic, count)
 
             if generated_question is None:
                 return JsonResponse({
@@ -100,18 +116,25 @@ def create_question (request):
                     "detail": "Something Went Wrong. Please Try Again Later"
                 }, status=404)
 
-            Question.objects.create(
+            t = Topic.objects.create(
                 topic=topic,
-                question=generated_question.question,
-                correct_answer=generated_question.correct_answer,
-                user_id=request.session.get("user_id")
+                count=count,
+                user_id=user_id
             )
+
+            for q in generated_question.questions:
+                Question.objects.create(
+                    topic_id=t.pk,
+                    question=q.question,
+                    correct_answer=q.correct_answer,
+                    user_id=user_id
+                )
 
             return JsonResponse({
                 "status": True,
+                "topic_id": t.pk,
                 "topic": topic,
-                "question": generated_question.question,
-                "correct_answer": generated_question.correct_answer
+                "count": count
             }, status=201)
         except json.JSONDecodeError:
             return JsonResponse({
@@ -123,59 +146,51 @@ def create_question (request):
         "message": "Method Not Allowed"
     }, status=500)
 
-def get_question (request):
+def get_recents (request):
     try:
         user_id = request.session.get("user_id")
-        questions = Question.objects.filter(user_id=user_id).order_by('-pk')[:5]
+        topics = Topic.objects.filter(user_id=user_id).order_by('-pk')[:5]
 
-        data = []
-        
-        for q in questions:
-            data.append({
-                "question_id": q.pk,
-                "topic": q.topic,
-                "question": q.question,
-                "answer": q.correct_answer
-            })
+        data = [{
+            "topic_id": q.pk,
+            "topic": q.topic,
+            "count": q.count
+        } for q in topics]
 
         return JsonResponse(data, safe=False)
     except Exception:
         return JsonResponse({
             "status": False,
-            "message": "Could not get Questions"
-        })
+            "message": "Could not get Topics"
+        },status=404)
 
-def delete_question (request, question_id):
+def delete_topic (request, topic_id):
     if request.method == "DELETE":
         try:
-            question = Question.objects.filter(pk=question_id).first()
+            topic = Topic.objects.filter(pk=topic_id).first()
 
-            question.delete()
-            return HttpResponse("Question Deleted", status=204)
+            topic.delete()
+            return HttpResponse("topic Deleted", status=204)
         except Exception:
             return JsonResponse({
                 "status": False,
                 "message": "Something went wrong when Deleting"
             })
 
-def get_all_questions (request):
+def get_topics (request):
     try:
         user_id = request.session.get("user_id")
-        question = Question.objects.filter(user_id=user_id).order_by('-pk')
-
-        data = []
-
-        for q in question:
-            data.append({
-                "question_id": q.pk,
-                "topic": q.topic,
-                "question": q.question,
-                "answer": q.correct_answer
-            })
-
+        topics = Topic.objects.filter(user_id=user_id).order_by('-pk')
+    
+        data = [{
+            "topic_id": q.pk,
+            "topic": q.topic,
+            "count": q.count
+        } for q in topics]
+    
         return JsonResponse(data, safe=False)
     except Exception:
         return JsonResponse({
             "status": False,
-            "message": "Could not get Questions"
-        })
+            "message": "Could not get Topics"
+        },status=404)

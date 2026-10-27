@@ -16,22 +16,28 @@
 </head>
 
 <body data-csrf="{{csrf_token}}">
-    <header>
-        <h1>Fast Quest</h1>
-        <div id="headerbutton">
-            <button onclick="window.location.href='/'">Home</button>
-            <button id="logout">Log Out</button>
-        </div>
-    </header>
-    <section id="recents">
-        <h2>{{username}}'s Questions Generated</h2>
-        <div id="question-container">
-            <div id="emptycard">
-                <h5>Loading Question...</h5>
+    {% if user_id is not None %}
+        <header>
+            <h1>Fast Quest</h1>
+            <div id="headerbutton">
+                <button onclick="window.location.href='/topics/'">Topics</button>
+                <button id="logout">Log Out</button>
             </div>
-        </div>
-    </section>
-    <script src="{% static "js/questions.js" %}"></script>
+        </header>
+        <section id="recents">
+            <h2>{{topic}} Questions</h2>
+            <div id="question-container">
+                {% for q in questions %}
+                    <div class="qcard">
+                        <strong>{{q.question}}</strong>
+                        <p> - {{q.correct_answer}} </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% else %}
+    <a href="/userlogin/">Go Back</a>
+    {% endif %}
 </body>
 
 </html>

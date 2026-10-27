@@ -20,7 +20,7 @@
     <header>
         <h1>Fast Quest</h1>
         <div id="headerbutton">
-            <button onclick="window.location.href='/questions/'">View All Questions</button>
+            <button onclick="window.location.href='/topics/'">View All Topics</button>
             <button id="logout">Log Out</button>
         </div>
     </header>
@@ -31,14 +31,19 @@
             <input type="text" id="topic" placeholder="Do you have a Topic in mind?">
             <button id="createBtn">Create</button>
         </div>
+        <div id="extra">
+            <label>
+                Number of Questions to be Generated <input type="number" id="count" value=1 min=1 max=20>
+            </label>
+        </div>
     </section>
     <div id="container">
     </div>
     <section id="recents">
-        <h3>Recent Questions Generated</h3>
-        <div id="question-container">
+        <h3>Recent Topics</h3>
+        <div id="topic-container">
             <div id="emptycard">
-                <h5>Loading Question...</h5>
+                <h5>Loading Topics...</h5>
             </div>
         </div>
     </section>

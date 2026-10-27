@@ -11,6 +11,7 @@ document.getElementById("topic").addEventListener("input", () => {
 
 async function create_question () {
     const topic = document.getElementById("topic").value;
+    const count = document.getElementById('count').value;
     if (!topic) {
         container.innerHTML = `
             <div id="warning">
@@ -33,15 +34,17 @@ async function create_question () {
             "X-CSRFToken": csrf_token
         },
         body: JSON.stringify({
-            "topic": topic
+            "topic": topic, "count": count
         })
     })
 
     const data = await response.json();
     if (data.status) {
-        container.innerHTML = "";
+        container.innerHTML = `<div id="success">
+                                    <p>Successfully Generated Questions for ${topic}. Check Below</p>
+                                </div>`;
         console.log(data)
-        get_questions();
+        get_topics();
     } else {
         container.innerHTML = `
             <div id="warning">
@@ -50,24 +53,33 @@ async function create_question () {
         `;
     }
     document.getElementById("topic").value = "";
+    document.getElementById("count").value = 1;
     createBtn.textContent = "Create";
     createBtn.disabled = false;
 
 }
 
-async function get_questions() {
-    const container = document.getElementById("question-container");
+async function get_topics() {
+    const container = document.getElementById("topic-container");
     try {
-        const response = await fetch("/get_question/");
-        const questions = await response.json();
+        const response = await fetch("/get_recents/");
+        if (response.status == 404) {
+            console.log("Could not Get Topics")
+            return;
+        }
+        const topics = await response.json();
         container.innerHTML = "";
         let n = 0;
-        questions.forEach(question => {
+        topics.forEach(topic => {
             container.innerHTML += `
-                <div class="qcard">
-                    <h4>Topic: ${question.topic}</h4>
-                    <p>${question.question}</p>
-                    <p>- ${question.answer}</p>
+                <div class="tcard">
+                    <div>
+                        <h4>Topic: ${topic.topic}</h4>
+                        <p>${topic.count} Questions Generated</p>
+                    </div>
+                    <div>
+                        <button onclick="window.location.href='/questions/${topic.topic_id}'">View Questions</button>
+                    </div>
                 </div>
             `;
             n++;
@@ -75,9 +87,9 @@ async function get_questions() {
 
         if (n < 1) {
             container.innerHTML = `
-                <div id="question-container">
+                <div id="topic-container">
                     <div id="emptycard">
-                        <h5>No Questions Generated</h5>
+                        <h5>No Topics Available</h5>
                     </div>
                 </div>
             `;
@@ -85,7 +97,7 @@ async function get_questions() {
     } catch (e) {
         console.error(e);
         container.innerHTML = `
-            <div id="question-container">
+            <div id="topic-container">
                 <div id="emptycard">
                     <h5>Something Went Wrong. Try Again Later</h5>
                 </div>
@@ -94,7 +106,7 @@ async function get_questions() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", get_questions);
+document.addEventListener("DOMContentLoaded", get_topics);
 
 document.getElementById("createBtn").addEventListener("click", create_question)
 document.getElementById("topic").addEventListener("keydown", (e) => {

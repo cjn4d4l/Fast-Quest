@@ -8,12 +8,15 @@ class Question (BaseModel):
     question: str = Field(description="Question to be generated based on the topic")
     correct_answer: str = Field(description="The correct answer of the generated question")
 
+class QuestionList (BaseModel):
+    questions: list[Question] = Field(description="The List of questions generated with the respective answers")
+
 client = genai.Client()
 
-def generate_question (topic: str):
+def generate_question (topic: str, count: int):
     try:
         prompt = f"""
-            Generate a question based on the topic {topic}, then provide the correct answer to that question
+            Generate {count} questions based on the topic {topic}, then provide the correct answers to each questions
         """
         
         interaction = client.interactions.create(
@@ -22,11 +25,11 @@ def generate_question (topic: str):
             response_format={
                 "type": "text",
                 "mime_type": "application/json",
-                "schema_": Question.model_json_schema()
+                "schema_": QuestionList.model_json_schema()
             },
         )
         
-        question = Question.model_validate_json(interaction.output_text)
+        question = QuestionList.model_validate_json(interaction.output_text)
         return question
     except Exception:
         return None
